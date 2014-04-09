@@ -1,26 +1,55 @@
-<?
-// This is a template for a PHP scraper on Morph (https://morph.io)
-// including some code snippets below that you should find helpful
+<?php
+require 'scraperwiki.php';
+require 'scraperwiki/simple_html_dom.php';
+$iplSeries="2014";
+//$html_content= scraperWiki::scrape("http://www.thatscricket.com/indian-premier-league/".$iplSeries."/");
+//ScraperWiki::attach("sqads", "src");
+//$playerIds=scraperwiki::select("distinct player_id from src.data desc");
+$matchNId=1;
+while($matchNId<=1){
 
-// require 'scraperwiki.php';
-// require 'scraperwiki/simple_html_dom.php';
-//
-// // Read in a page
-// $html = scraperwiki::scrape("http://foo.com");
-//
-// // Find something on the page using css selectors
-// $dom = new simple_html_dom();
-// $dom->load($html);
-// print_r($dom->find("table.list"));
-//
-// // Write out to the sqlite database using scraperwiki library
-// scraperwiki::save_sqlite(array('name'), array('name' => 'susan', 'occupation' => 'software developer'));
-//
-// // An arbitrary query against the database
-// scraperwiki::select("* from data where 'name'='peter'")
+//Carrer Stats http://dynamic.pulselive.com/test/data/core/cricket/careerStats/1_careerStats.js?_1363343668516=
+//http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2012/ipl2012-70/scoring.js?_1364576135590=
+//http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2013/matchSchedule2.js?_1364793413209=
+$json_content= scraperWiki::scrape("http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2014/matchSchedule2.js?_1364793413209=");
 
-// You don't have to do things with the ScraperWiki library. You can use whatever is installed
-// on Morph for PHP (See https://github.com/openaustralia/morph-docker-php) and all that matters
-// is that your final data is written to an Sqlite database called data.sqlite in the current working directory which
-// has at least a table called data.
+//print "JSON".$json_content;
+ 
+if(strpos($json_content,"The page is not found") === FALSE){       
+        //http://dynamic.pulselive.com/dynamic/data/core/cricket/2012/ipl2012/23_careerStats.js
+        $json_content=str_replace("onMatchSchedule(","",$json_content);
+            $json_content=str_replace(");","",$json_content);
+        $myMatchData=null;
+        $myMatchData=json_decode($json_content,true); 
+        //var_dump($myPlayerData);
+        // PLAYER DATA
+        foreach ($myMatchData["schedule"] as $match){
+     
+        //var_dump($match);
+        // Prepare Overall Record
+        if(array_key_exists('team1', $match)){
+        $allrecord=array(
+                'matchId'=> $match["matchId"]["name"],
+                'venueCity'=> $match["venue"]["city"],
+                'season'=> "ipl".$iplSeries,
+                'teamA'=>$match["team1"]["team"]["shortName"],
+                'teamB'=>$match["team2"]["team"]["shortName"],
+                    
+                );
+        
+         scraperwiki::save(array('matchId','venueCity'), $allrecord); 
+         }
+        }
+
+}
+else
+{
+    print "Empty JSON FOR".$matchId."\n";
+}
+
+$matchNId++;
+
+
+}
+
 ?>

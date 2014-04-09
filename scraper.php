@@ -29,15 +29,15 @@ if(strpos($json_content,"The page is not found") === FALSE){
         // Prepare Overall Record
         if(array_key_exists('team1', $match)){
         $allrecord=array(
-                'matchId'=> $match["matchId"]["name"],
-                'venueCity'=> $match["venue"]["city"],
+                'matchid'=> $match["matchId"]["name"],
+                'venuecity'=> $match["venue"]["city"],
                 'season'=> "ipl".$iplSeries,
-                'teamA'=>$match["team1"]["team"]["shortName"],
-                'teamB'=>$match["team2"]["team"]["shortName"],
+                'teama'=>$match["team1"]["team"]["shortName"],
+                'teama'=>$match["team2"]["team"]["shortName"],
                     
                 );
         
-         scraperwiki::save_sqlite(array('matchId','venueCity'), $allrecord); 
+         scraperwiki::save_sqlite(array('matchid','venuecity'), $allrecord); 
          }
         }
 
